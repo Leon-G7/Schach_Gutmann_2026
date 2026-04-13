@@ -22,32 +22,32 @@ class Program
         Pawn blackPawn = new Pawn {Color = PieceColor.Black};
 
 
-        myBoard.SetFigureManual(0, 3, whiteKing);
-        myBoard.SetFigureManual(7, 3, blackKing);
-        myBoard.SetFigureManual(0, 4, whiteQueen);
-        myBoard.SetFigureManual(7, 4, blackQueen);
-        myBoard.SetFigureManual(0, 0, whiteRook);
-        myBoard.SetFigureManual(0, 7, whiteRook);
-        myBoard.SetFigureManual(7, 0, blackRook);
-        myBoard.SetFigureManual(7, 7, blackRook);
-        myBoard.SetFigureManual(0, 2, whiteBishop);
-        myBoard.SetFigureManual(0, 5, whiteBishop);
-        myBoard.SetFigureManual(7, 2, blackBishop);
-        myBoard.SetFigureManual(7, 5, blackBishop);
-        myBoard.SetFigureManual(0, 1, whiteKnight);
-        myBoard.SetFigureManual(0, 6, whiteKnight);
-        myBoard.SetFigureManual(7, 1, blackKnight);
-        myBoard.SetFigureManual(7, 6, blackKnight);
+        myBoard.SetFigure(0, 3, whiteKing);
+        myBoard.SetFigure(7, 3, blackKing);
+        myBoard.SetFigure(0, 4, whiteQueen);
+        myBoard.SetFigure(7, 4, blackQueen);
+        myBoard.SetFigure(0, 0, whiteRook);
+        myBoard.SetFigure(0, 7, whiteRook);
+        myBoard.SetFigure(7, 0, blackRook);
+        myBoard.SetFigure(7, 7, blackRook);
+        myBoard.SetFigure(0, 2, whiteBishop);
+        myBoard.SetFigure(0, 5, whiteBishop);
+        myBoard.SetFigure(7, 2, blackBishop);
+        myBoard.SetFigure(7, 5, blackBishop);
+        myBoard.SetFigure(0, 1, whiteKnight);
+        myBoard.SetFigure(0, 6, whiteKnight);
+        myBoard.SetFigure(7, 1, blackKnight);
+        myBoard.SetFigure(7, 6, blackKnight);
         for (int i = 0; i < 8; i++)
         {
             Pawn pawnblack = new Pawn { Color = PieceColor.Black };
-            myBoard.SetFigureManual(6, i, pawnblack);
+            myBoard.SetFigure(6, i, pawnblack);
         }
 
         for (int i = 0; i < 8; i++)
         {
             Pawn pawnwhite = new Pawn { Color = PieceColor.White };
-            myBoard.SetFigureManual(1, i, pawnwhite);
+            myBoard.SetFigure(1, i, pawnwhite);
         }
 
 

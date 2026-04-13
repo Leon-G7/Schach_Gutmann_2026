@@ -1,6 +1,4 @@
-﻿using System.Security.Cryptography.X509Certificates;
-
-namespace ChessGame;
+﻿namespace ChessGame;
 
 public class GameField
 {
@@ -9,102 +7,134 @@ public class GameField
     public override string ToString()
     {
         string result = "";
-
         for (int x = 0; x < 8; x++)
         {
             for (int y = 0; y < 8; y++)
             {
                 Piece piece = _board[x, y];
-
                 if (piece != null)
                 {
                     result += $" {piece} ";
                 }
                 else
                 {
-                    if ((x + y) % 2 == 0)
-                    {
-                        result += "   ";
-                    }
-                    else
-                    {
-                        result += " # ";
-                    }
+                    result += (x + y) % 2 == 0 ? "   " : " # ";
                 }
-
                 if (y < 7) result += "|";
             }
-
             result += "\n";
-
-            if (x < 7)
-            {
-                result += "---+---+---+---+---+---+---+---\n";
-            }
+            if (x < 7) result += "---+---+---+---+---+---+---+---\n";
         }
         return result;
     }
 
-    public void SetFigureManual(int x, int y, Piece figure)
+    public void SetFigure(int x, int y, Piece figure)
     {
         if (x >= 0 && x < 8 && y >= 0 && y < 8)
         {
             _board[x, y] = figure;
         }
     }
+
+    public Piece[,] GetInternalBoard() => _board;
 }
 
-public class SetFigure
-{
-    // Hier kommen später Methoden rein wie:
-    // public void Place(GameField field, int x, int y, Piece piece)
-}
-
-public enum PieceColor
-{
-    White,
-    Black
-}
+public enum PieceColor { White, Black }
 
 public abstract class Piece
 {
     public PieceColor Color { get; set; }
-
     public abstract override string ToString();
+    public abstract bool CanMove(int currentX, int currentY, int targetX, int targetY, Piece[,] board);
+    protected bool IsPathClear(int currentX, int currentY, int targetX, int targetY, Piece[,] board){
+        int stepX = Math.Abs(targetX - currentX);
+        int stepY = Math.Abs(targetX -currentY);
+
+        int checkX = stepX + currentX;
+        int checkY = stepY + currentX;
+
+        while(checkX != targetX || checkY != targetY){
+            if(board[checkX, checkY] != null){
+                return false;
+            }
+            checkX += stepX;
+            checkY += stepY;
+        }
+        return true;
+    }
 }
 
 public class King : Piece
 {
     public override string ToString() => Color == PieceColor.White ? "K" : "k";
 
-    public 
+    public override bool CanMove(int currentX, int currentY, int targetX, int targetY, Piece[,] board)
+    {
+        int distanceX = Math.Abs(targetX - currentX);
+        int distanceY = Math.Abs(targetY - currentY);
+        
+        if (distanceX <= 1 && distanceY <= 1)
+        {
+            if (board[targetX, targetY] == null || board[targetX, targetY].Color != this.Color)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
 }
 
 public class Queen : Piece
 {
     public override string ToString() => Color == PieceColor.White ? "Q" : "q";
+    public override bool CanMove(int currentX, int currentY, int targetX, int targetY, Piece[,] board){
+        int distanceX = Math.Abs(targetX - currentX);
+        int distanceY = Math.Abs(targetX - currentX);
+
+        bool isStraight = (distanceX == 0 || distanceY == 0);
+        bool isDiagonal = (distanceX == distanceY);
+
+        if(isStraight || isDiagonal){
+            if(board[targetX, targetY] != null && board[targetX, targetY].Color == this.Color){
+                return false;
+            }
+            return IsPathClear(currentX, currentY, targetX, targetY, board);
+        }
+        return false;
+    }
+    
 }
 
 public class Rook : Piece
 {
     public override string ToString() => Color == PieceColor.White ? "R" : "r";
+    public override bool CanMove(int currentX, int currentY, int targetX, int targetY, Piece[,] board){
+        if(currentX == targetX || currentY == targetY){
+            if(board[targetX, targetY] != null && board[targetX, targetY].Color == this.Color){
+                return false;
+            }
+            return IsPathClear(currentX, currentY, targetX, targetY, board);
+        }
+        return false;
+    }
 }
 
 public class Bishop : Piece
 {
     public override string ToString() => Color == PieceColor.White ? "B" : "b";
+    public override bool CanMove(int cX, int cY, int tX, int tY, Piece[,] b) => false;
 }
 
 public class Knight : Piece
 {
     public override string ToString() => Color == PieceColor.White ? "N" : "n";
+    public override bool CanMove(int cX, int cY, int tX, int tY, Piece[,] b) => false;
 }
 
 public class Pawn : Piece
 {
     public override string ToString() => Color == PieceColor.White ? "P" : "p";
+    public override bool CanMove(int cX, int cY, int tX, int tY, Piece[,] b) => false;
 }
 
-public class WinCondition
-{
-}
+public class WinCondition { }
