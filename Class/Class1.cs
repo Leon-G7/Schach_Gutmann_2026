@@ -47,19 +47,23 @@ public abstract class Piece
     public abstract override string ToString();
     public abstract bool CanMove(int currentX, int currentY, int targetX, int targetY, Piece[,] board);
     protected bool IsPathClear(int currentX, int currentY, int targetX, int targetY, Piece[,] board){
-        int stepX = Math.Abs(targetX - currentX);
-        int stepY = Math.Abs(targetX -currentY);
+        int stepX = Math.Sign(targetX - currentX);
+        int stepY = Math.Sign(targetY -currentY);
 
         int checkX = stepX + currentX;
-        int checkY = stepY + currentX;
+        int checkY = stepY + currentY;
 
-        while(checkX != targetX || checkY != targetY){
-            if(board[checkX, checkY] != null){
-                return false;
-            }
-            checkX += stepX;
-            checkY += stepY;
+        while (checkX != targetX || checkY != targetY)
+    {
+        if (checkX < 0 || checkX > 7 || checkY < 0 || checkY > 7) return false;
+
+        if (board[checkX, checkY] != null)
+        {
+            return false;
         }
+        checkX += stepX;
+        checkY += stepY;
+    }
         return true;
     }
 }
@@ -89,7 +93,7 @@ public class Queen : Piece
     public override string ToString() => Color == PieceColor.White ? "Q" : "q";
     public override bool CanMove(int currentX, int currentY, int targetX, int targetY, Piece[,] board){
         int distanceX = Math.Abs(targetX - currentX);
-        int distanceY = Math.Abs(targetX - currentX);
+        int distanceY = Math.Abs(targetY - currentY);
 
         bool isStraight = (distanceX == 0 || distanceY == 0);
         bool isDiagonal = (distanceX == distanceY);
