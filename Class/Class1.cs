@@ -45,25 +45,23 @@ public abstract class Piece
 {
     public PieceColor Color { get; set; }
     public abstract override string ToString();
-    public abstract bool CanMove(int currentX, int currentY, int targetX, int targetY, Piece[,] board);
-    protected bool IsPathClear(int currentX, int currentY, int targetX, int targetY, Piece[,] board){
-        int stepX = Math.Sign(targetX - currentX);
-        int stepY = Math.Sign(targetY -currentY);
 
-        int checkX = stepX + currentX;
-        int checkY = stepY + currentY;
+    public abstract bool CanMove(int currentX, int currentY, int targetX, int targetY, Piece[,] board);
+
+    protected bool IsPathClear(int currentX, int currentY, int targetX, int targetY, Piece[,] board)
+    {
+        int stepX = Math.Sign(targetX - currentX);
+        int stepY = Math.Sign(targetY - currentY);
+        int checkX = currentX + stepX;
+        int checkY = currentY + stepY;
 
         while (checkX != targetX || checkY != targetY)
-    {
-        if (checkX < 0 || checkX > 7 || checkY < 0 || checkY > 7) return false;
-
-        if (board[checkX, checkY] != null)
         {
-            return false;
+            if (checkX < 0 || checkX > 7 || checkY < 0 || checkY > 7) return false;
+            if (board[checkX, checkY] != null) return false;
+            checkX += stepX;
+            checkY += stepY;
         }
-        checkX += stepX;
-        checkY += stepY;
-    }
         return true;
     }
 }
@@ -91,17 +89,22 @@ public class King : Piece
 public class Queen : Piece
 {
     public override string ToString() => Color == PieceColor.White ? "Q" : "q";
-    public override bool CanMove(int currentX, int currentY, int targetX, int targetY, Piece[,] board){
+
+    public override bool CanMove(int currentX, int currentY, int targetX, int targetY, Piece[,] board)
+    {
+        if (targetX < 0 || targetX > 7 || targetY < 0 || targetY > 7) return false;
+
         int distanceX = Math.Abs(targetX - currentX);
         int distanceY = Math.Abs(targetY - currentY);
 
         bool isStraight = (distanceX == 0 || distanceY == 0);
         bool isDiagonal = (distanceX == distanceY);
 
-        if(isStraight || isDiagonal){
-            if(board[targetX, targetY] != null && board[targetX, targetY].Color == this.Color){
+        if (isStraight || isDiagonal)
+        {
+            if (board[targetX, targetY] != null && board[targetX, targetY].Color == this.Color)
                 return false;
-            }
+
             return IsPathClear(currentX, currentY, targetX, targetY, board);
         }
         return false;
