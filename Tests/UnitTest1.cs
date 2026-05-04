@@ -1,6 +1,4 @@
-﻿using System.Drawing;
-using System.IO.Pipelines;
-using ChessGame;
+﻿using ChessGame;
 
 namespace Tests;
 
@@ -117,5 +115,59 @@ public class ChessGame
                 Assert.Null(board[x, y]);
             }
         }
+    }
+
+    [Fact]
+    public void Test_Queen_Can_Capture_Enemy(){
+        GameField game = new GameField();
+        Queen whiteQueen = new Queen { Color = PieceColor.White };
+        Pawn blackPawn = new Pawn { Color = PieceColor.Black };
+
+        game.SetFigure(0, 0, whiteQueen);
+        game.SetFigure(0, 5, blackPawn);
+
+        bool canCapture = whiteQueen.CanMove(0, 0, 0, 5, game.GetInternalBoard());
+
+        Assert.True(canCapture);
+    }
+
+    [Fact]
+    public void Test_If_Queen_Can_Jump_Over_Figures(){
+        GameField game = new GameField();
+        Queen whiteQueen = new Queen { Color = PieceColor.White };
+        Pawn whitePawn = new Pawn { Color = PieceColor.White };
+
+        game.SetFigure(0, 0, whiteQueen);
+        game.SetFigure(0, 5, whitePawn);
+
+        bool canJump = whiteQueen.CanMove(0, 0, 0, 6, game.GetInternalBoard());
+
+        Assert.False(canJump);
+    }
+
+    [Fact]
+    public void Test_If_Queen_Can_Capture_Own_Figure(){
+        GameField game = new GameField();
+        Queen whiteQueen = new Queen { Color = PieceColor.White };
+        Pawn whitePawn = new Pawn { Color = PieceColor.White };
+
+        game.SetFigure(0, 0, whiteQueen);
+        game.SetFigure(0, 5, whitePawn);
+
+        bool canMove = whiteQueen.CanMove(0, 0, 0, 5, game.GetInternalBoard());
+
+        Assert.False(canMove);
+    }
+
+    [Fact]
+    public void Test_If_Queen_Can_Jump_Out_Of_The_Field(){
+        GameField game = new GameField();
+        Queen whiteQueen = new Queen { Color = PieceColor.White };
+
+        game.SetFigure(0, 0, whiteQueen);
+
+        bool canMove = whiteQueen.CanMove(0, 0, 9, 9, game.GetInternalBoard());
+
+        Assert.False(canMove);
     }
 }
