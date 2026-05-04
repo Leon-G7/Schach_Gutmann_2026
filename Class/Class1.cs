@@ -57,8 +57,12 @@ public abstract class Piece
 
         while (checkX != targetX || checkY != targetY)
         {
-            if (checkX < 0 || checkX > 7 || checkY < 0 || checkY > 7) return false;
-            if (board[checkX, checkY] != null) return false;
+            if (checkX < 0 || checkX > 7 || checkY < 0 || checkY > 7){
+                return false;
+                }
+            if (board[checkX, checkY] != null){
+                return false;
+            }
             checkX += stepX;
             checkY += stepY;
         }
@@ -72,16 +76,44 @@ public class King : Piece
 
     public override bool CanMove(int currentX, int currentY, int targetX, int targetY, Piece[,] board)
     {
+        for (int x = -1; x <= 1; x++)
+        {
+            for (int y = -1; y <= 1; y++)
+            {
+                int checkX = targetX + x;
+                int checkY = targetY + y;
+
+                if (checkX >= 0 && checkX <= 7 && checkY >= 0 && checkY <= 7)
+                {
+                    var piece = board[checkX, checkY];
+                    if (piece is King && piece.Color != this.Color)
+                    {
+                        return false;
+                    }
+                }
+            }
+        }
+
+        if (targetX < 0 || targetX > 7 || targetY < 0 || targetY > 7) return false;
+
         int distanceX = Math.Abs(targetX - currentX);
         int distanceY = Math.Abs(targetY - currentY);
         
         if (distanceX <= 1 && distanceY <= 1)
         {
-            if (board[targetX, targetY] == null || board[targetX, targetY].Color != this.Color)
+            Piece targetPiece = board[targetX, targetY];
+
+            if (targetPiece == null)
+            {
+                return true;
+            }
+
+            if (targetPiece.Color != this.Color && !(targetPiece is King))
             {
                 return true;
             }
         }
+        
         return false;
     }
 }
@@ -115,13 +147,21 @@ public class Queen : Piece
 public class Rook : Piece
 {
     public override string ToString() => Color == PieceColor.White ? "R" : "r";
-    public override bool CanMove(int currentX, int currentY, int targetX, int targetY, Piece[,] board){
-        if(currentX == targetX || currentY == targetY){
-            if(board[targetX, targetY] != null && board[targetX, targetY].Color == this.Color){
+
+    public override bool CanMove(int currentX, int currentY, int targetX, int targetY, Piece[,] board)
+    {
+        if (targetX < 0 || targetX > 7 || targetY < 0 || targetY > 7) return false;
+
+        if (currentX == targetX || currentY == targetY)
+        {
+            if (board[targetX, targetY] != null && board[targetX, targetY].Color == this.Color)
+            {
                 return false;
             }
+
             return IsPathClear(currentX, currentY, targetX, targetY, board);
         }
+
         return false;
     }
 }
@@ -141,7 +181,35 @@ public class Knight : Piece
 public class Pawn : Piece
 {
     public override string ToString() => Color == PieceColor.White ? "P" : "p";
-    public override bool CanMove(int cX, int cY, int tX, int tY, Piece[,] b) => false;
-}
 
+    public override bool CanMove(int currentX, int currentY, int targetX, int targetY, Piece[,] board)
+    {
+        if (targetX < 0 || targetX > 7 || targetY < 0 || targetY > 7) return false;
+
+        int diffX = targetX - currentX;
+        int diffY = targetY - currentY;
+
+        int direction = (Color == PieceColor.White) ? -1 : 1;
+
+        if (diffY == 0) 
+        {
+            if (diffX == direction)
+            {
+                return board[targetX, targetY] == null;
+            }
+
+            int startRow = (Color == PieceColor.White) ? 6 : 1;
+            if (currentX == startRow && diffX == 2 * direction)
+            {
+                return board[currentX + direction, currentY] == null && board[targetX, targetY] == null;
+            }
+        }
+        else if (Math.Abs(diffY) == 1 && diffX == direction)
+        {
+            return board[targetX, targetY] != null && board[targetX, targetY].Color != this.Color;
+        }
+
+        return false;
+    }
+}
 public class WinCondition { }
