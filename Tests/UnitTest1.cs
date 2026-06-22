@@ -445,4 +445,58 @@ public class RookTests{
 
         Assert.False(canMove);
     }
+
+    [Fact]
+    public void Test_Can_Move_Out_Of_Field(){
+        GameField game = new GameField();
+        Rook blackRook = new Rook { Color = PieceColor.Black };
+
+        game.SetFigure(0, 0, blackRook);
+
+        bool canMove = blackRook.CanMove(0, 0, 9, 9, game.GetInternalBoard());
+
+        Assert.False(canMove);
+    }
+
+    [Fact]
+    public void Test_If_Rook_Can_Capture_Same_Colored_Rook(){
+        GameField game = new GameField();
+        Rook blackRook = new Rook { Color = PieceColor.Black };
+        Pawn blackPawn = new Pawn { Color = PieceColor.Black };
+
+        game.SetFigure(0, 0, blackRook);
+        game.SetFigure(1, 0, blackPawn);
+
+        bool canMove = blackRook.CanMove(0, 0, 1, 0, game.GetInternalBoard());
+
+        Assert.False(canMove);
+    }
+
+    [Fact]
+    public void Test_If_Rook_Can_Capture_Enemie_Rook(){
+        GameField game = new GameField();
+        Rook blackRook = new Rook { Color = PieceColor.Black };
+        Pawn whitePawn = new Pawn { Color = PieceColor.White };
+
+        game.SetFigure(0, 0, blackRook);
+        game.SetFigure(1, 0, whitePawn);
+
+        bool canMove = blackRook.CanMove(0, 0, 1, 0, game.GetInternalBoard());
+
+        Assert.True(canMove);
+    }
+
+    [Fact]
+    public void Test_If_Rook_Can_Jump_Over_Piece(){
+        GameField game = new GameField();
+        Rook blackRook = new Rook { Color = PieceColor.Black };
+        Pawn whitePawn = new Pawn { Color = PieceColor.White };
+
+        game.SetFigure(0, 0, blackRook);
+        game.SetFigure(1, 0, whitePawn);
+
+        bool canMove = blackRook.CanMove(0, 0, 4, 0, game.GetInternalBoard());
+
+        Assert.False(canMove);
+    }
 }
